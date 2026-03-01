@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>codeshare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #07090f;
+      --bg2: #0d1117;
+      --bg3: #161b22;
+      --border: #1c2128;
+      --border2: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --dim: #484f58;
+      --blue: #58a6ff;
+      --green: #3fb950;
+      --red: #f85149;
+      --purple: #bc8cff;
+      --yellow: #e3b341;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(7,9,15,.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px; height: 54px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon { font-size: 22px; }
+    .logo-text { color: var(--text); font-weight: 800; font-size: 15px; letter-spacing: -.5px; }
+    .logo-text span { color: var(--blue); }
+    .nav-links { display: flex; gap: 4px; align-items: center; }
+    .nav-links a, .nav-links button {
+      color: var(--muted); text-decoration: none; font-size: 12px;
+      padding: 5px 12px; border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent; cursor: pointer; font-family: inherit;
+      transition: all .15s;
+    }
+    .nav-links a:hover, .nav-links button:hover { color: var(--text); border-color: var(--border2); background: var(--bg3); }
+    .nav-links a.active { color: var(--blue); border-color: var(--border); background: var(--bg3); }
+    .btn-new {
+      background: var(--green) !important; color: #000 !important;
+      border-color: var(--green) !important; font-weight: 700 !important;
+    }
+    .btn-new:hover { opacity: .85 !important; }
+    #user-nav { display: flex; gap: 4px; align-items: center; }
+
+    /* HERO */
+    .hero {
+      text-align: center; padding: 80px 24px 56px;
+      background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(88,166,255,.08), transparent);
+    }
+    .hero h1 {
+      font-size: clamp(32px,5vw,56px); font-weight: 800;
+      letter-spacing: -2px; line-height: 1.1; margin-bottom: 14px;
+      background: linear-gradient(135deg, var(--text) 40%, var(--muted));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero h1 em { font-style: normal; -webkit-text-fill-color: var(--blue); }
+    .hero p { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+    .hero-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 20px; border-radius: 8px; font-family: inherit;
+      font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none;
+      border: 1px solid var(--border2); transition: all .15s;
+    }
+    .btn-primary { background: var(--blue); color: #000; border-color: var(--blue); }
+    .btn-primary:hover { background: #79b8ff; }
+    .btn-ghost { background: transparent; color: var(--text); }
+    .btn-ghost:hover { background: var(--bg3); }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: flex; justify-content: center; gap: 40px;
+      padding: 18px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 22px; font-weight: 800; color: var(--text); }
+    .stat-label { font-size: 11px; color: var(--dim); margin-top: 2px; }
+
+    /* GRID */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+    .section-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px;
+    }
+    .section-title { font-size: 13px; color: var(--dim); font-weight: 400; }
+    .search-box {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .search-box input {
+      background: var(--bg2); border: 1px solid var(--border2);
+      color: var(--text); padding: 7px 12px; border-radius: 8px;
+      font-family: inherit; font-size: 12px; outline: none; width: 200px;
+      transition: border-color .15s;
+    }
+    .search-box input:focus { border-color: var(--blue); }
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 12px;
+    }
+    .card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px; cursor: pointer;
+      transition: all .15s; text-decoration: none; display: block;
+    }
+    .card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 10px; }
+    .card-title { color: var(--blue); font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .badge {
+      background: var(--bg3); color: var(--dim); padding: 2px 8px;
+      border-radius: 4px; font-size: 10px; white-space: nowrap; border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .card-desc { color: var(--muted); font-size: 12px; line-height: 1.5; margin-bottom: 12px; min-height: 18px; }
+    .card-preview {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+      padding: 10px 12px; font-size: 11px; color: #7d8590; line-height: 1.6;
+      overflow: hidden; max-height: 60px; margin-bottom: 12px;
+      white-space: pre; tab-size: 2;
+    }
+    .card-meta { display: flex; gap: 12px; font-size: 11px; color: var(--dim); }
+    .card-meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* LOAD MORE */
+    .load-wrap { text-align: center; margin-top: 32px; }
+    #empty { text-align: center; padding: 60px; color: var(--dim); font-size: 13px; display: none; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      box-shadow: 0 4px 20px rgba(0,0,0,.4); opacity: 0; pointer-events: none;
+      transition: opacity .25s, transform .25s; transform: translateY(8px);
+    }
+    .toast.show { opacity: 1; transform: none; pointer-events: all; }
+    .toast.ok { background: var(--green); color: #000; }
+    .toast.err { background: var(--red); color: #fff; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+      z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: 14px; width: 100%; max-width: 440px; padding: 32px;
+      animation: popIn .2s ease;
+    }
+    @keyframes popIn { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal h2 { font-size: 18px; margin-bottom: 20px; font-weight: 700; }
+    .tabs { display: flex; background: var(--bg); border-radius: 8px; padding: 4px; margin-bottom: 20px; }
+    .tab {
+      flex: 1; padding: 7px; border: none; background: transparent; color: var(--dim);
+      font-family: inherit; font-size: 12px; cursor: pointer; border-radius: 6px; transition: all .15s;
+    }
+    .tab.active { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 11px; color: var(--dim); margin-bottom: 6px; }
+    .field input {
+      width: 100%; background: var(--bg); border: 1px solid var(--border2);
+      color: var(--text); padding: 10px 14px; border-radius: 8px;
+      font-family: inherit; font-size: 13px; outline: none;
+      transition: border-color .15s;
+    }
+    .field input:focus { border-color: var(--blue); }
+    .modal-actions { display: flex; gap: 8px; margin-top: 4px; }
+    .modal-actions button { flex: 1; padding: 10px; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border2); }
+    #submit-auth { background: var(--blue); color: #000; border-color: var(--blue); }
+    #cancel-auth { background: transparent; color: var(--muted); }
+
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">
+    <span class="logo-icon">⟨/⟩</span>
+    <span class="logo-text">code<span>share</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="active">home</a>
+    <a href="explore.html">explore</a>
+    <div id="user-nav">
+      <button onclick="openAuth()">login</button>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>share your <em>code</em><br/>with the world</h1>
+  <p>permanent snippets · syntax highlight · raw endpoints · no ads</p>
+  <div class="hero-btns">
+    <a href="new.html" class="btn btn-primary">+ new snippet</a>
+    <a href="explore.html" class="btn btn-ghost">explore →</a>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num" id="stat-snippets">—</div><div class="stat-label">snippets</div></div>
+  <div class="stat"><div class="stat-num" id="stat-views">—</div><div class="stat-label">total views</div></div>
+  <div class="stat"><div class="stat-num" id="stat-langs">—</div><div class="stat-label">languages</div></div>
+</div>
+
+<div class="container">
+  <div class="section-head">
+    <span class="section-title">recent snippets</span>
+    <div class="search-box">
+      <input id="search" placeholder="search..." oninput="filterCards()"/>
+    </div>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div id="empty">no snippets found</div>
+  <div class="load-wrap">
+    <button class="btn btn-ghost" id="load-more" onclick="loadMore()" style="display:none">load more</button>
+  </div>
+</div>
+
+<!-- Auth Modal -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal">
+    <h2 id="modal-title">welcome back</h2>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">login</button>
+      <button class="tab" onclick="switchTab('register')">register</button>
+    </div>
+    <div class="field"><label>username</label><input id="auth-username" placeholder="yourusername" autocomplete="username"/></div>
+    <div class="field"><label>password</label><input id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password"/></div>
+    <div class="modal-actions">
+      <button id="cancel-auth" onclick="closeAuth()">cancel</button>
+      <button id="submit-auth" onclick="submitAuth()">login</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api';
+let allSnippets = [], page = 1, currentTab = 'login';
+
+const token = () => localStorage.getItem('token');
+const user = () => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } }
+
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = `toast ${type} show`;
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+function escape(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function makeCard(s) {
+  const lines = s.code.split('\n').length;
+  const preview = escape(s.code.split('\n').slice(0,3).join('\n'));
+  return `
+    <a class="card" href="snippet.html#${s.slug}">
+      <div class="card-top">
+        <div class="card-title">${escape(s.title)}</div>
+        <div class="badge">${s.language}</div>
+      </div>
+      <div class="card-desc">${escape((s.description||'').slice(0,70))}${(s.description||'').length>70?'…':''}</div>
+      <div class="card-preview">${preview}</div>
+      <div class="card-meta">
+        <span>@${escape(s.author?.username||'?')}</span>
+        <span>📄 ${lines} lines</span>
+        <span>👁 ${s.views}</span>
+        <span>${new Date(s.createdAt).toLocaleDateString()}</span>
+      </div>
+    </a>`;
+}
+
+async function load(reset=false) {
+  if(reset) { page=1; allSnippets=[]; }
+  try {
+    const r = await fetch(`${API}/snippets?page=${page}&limit=12`);
+    const d = await r.json();
+    allSnippets = [...allSnippets, ...d.snippets];
+    renderGrid(allSnippets);
+    document.getElementById('load-more').style.display = d.snippets.length===12 ? '' : 'none';
+
+    // stats
+    document.getElementById('stat-snippets').textContent = d.total.toLocaleString();
+    const totalViews = allSnippets.reduce((a,s)=>a+s.views,0);
+    document.getElementById('stat-views').textContent = totalViews.toLocaleString();
+    const langs = new Set(allSnippets.map(s=>s.language)).size;
+    document.getElementById('stat-langs').textContent = langs;
+  } catch(e) { toast('Failed to load snippets','err'); }
+}
+
+function renderGrid(snippets) {
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtered = q ? snippets.filter(s =>
+    s.title.toLowerCase().includes(q) ||
+    (s.description||'').toLowerCase().includes(q) ||
+    s.language.toLowerCase().includes(q) ||
+    s.author?.username.toLowerCase().includes(q)
+  ) : snippets;
+  document.getElementById('grid').innerHTML = filtered.map(makeCard).join('');
+  document.getElementById('empty').style.display = filtered.length ? 'none' : 'block';
+}
+
+function filterCards() { renderGrid(allSnippets); }
+
+function loadMore() { page++; load(); }
+
+// Auth
+function updateNavUser() {
+  const u = user();
+  const nav = document.getElementById('user-nav');
+  if(u) {
+    nav.innerHTML = `
+      <a href="new.html" class="nav-links btn-new" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;background:#3fb950;color:#000;text-decoration:none;border:1px solid #3fb950">+ new</a>
+      <a href="profile.html" style="color:var(--muted);text-decoration:none;font-size:12px;padding:5px 12px;border-radius:6px;border:1px solid transparent;transition:all .15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">@${u.username}</a>
+      <button onclick="logout()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);padding:5px 10px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px">×</button>`;
+  } else {
+    nav.innerHTML = `<button onclick="openAuth()" style="background:transparent;border:1px solid var(--border2);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px">login</button>`;
+  }
+}
+
+function openAuth() { document.getElementById('auth-modal').classList.add('open'); }
+function closeAuth() { document.getElementById('auth-modal').classList.remove('open'); }
+function switchTab(t) {
+  currentTab = t;
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',i===(t==='login'?0:1)));
+  document.getElementById('modal-title').textContent = t==='login'?'welcome back':'create account';
+  document.getElementById('submit-auth').textContent = t;
+}
+
+async function submitAuth() {
+  const username = document.getElementById('auth-username').value.trim();
+  const password = document.getElementById('auth-password').value;
+  if(!username||!password) return toast('Fill all fields','err');
+  try {
+    const r = await fetch(`${API}/auth/${currentTab}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username,password})
+    });
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error);
+    localStorage.setItem('token', d.token);
+    localStorage.setItem('user', JSON.stringify(d.user));
+    closeAuth();
+    updateNavUser();
+    toast(`welcome, @${d.user.username}!`);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  updateNavUser();
+  toast('logged out');
+}
+
+document.getElementById('auth-password').addEventListener('keydown', e => { if(e.key==='Enter') submitAuth(); });
+document.getElementById('auth-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeAuth(); });
+
+updateNavUser();
+load(true);
+</script>
+</body>
+</html>

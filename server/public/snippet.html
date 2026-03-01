@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>snippet · codeshare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#07090f;--bg2:#0d1117;--bg3:#161b22;--border:#1c2128;--border2:#30363d;--text:#e6edf3;--muted:#8b949e;--dim:#484f58;--blue:#58a6ff;--green:#3fb950;--red:#f85149;--purple:#bc8cff;--yellow:#e3b341;--orange:#d19a66;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;min-height:100vh;}
+    nav{position:sticky;top:0;z-index:100;background:rgba(7,9,15,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .logo-text{color:var(--text);font-weight:800;font-size:15px;letter-spacing:-.5px;}
+    .logo-text span{color:var(--blue);}
+    .nav-links{display:flex;gap:4px;align-items:center;}
+    .nav-links a,.nav-links button{color:var(--muted);text-decoration:none;font-size:12px;padding:5px 12px;border-radius:6px;border:1px solid transparent;background:transparent;cursor:pointer;font-family:inherit;transition:all .15s;}
+    .nav-links a:hover,.nav-links button:hover{color:var(--text);border-color:var(--border2);background:var(--bg3);}
+
+    .container{max-width:1000px;margin:0 auto;padding:28px 24px 80px;}
+    .back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;text-decoration:none;margin-bottom:22px;padding:5px 10px;border-radius:6px;border:1px solid transparent;transition:all .15s;}
+    .back:hover{border-color:var(--border2);background:var(--bg3);color:var(--text);}
+
+    .snippet-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+
+    /* header */
+    .snip-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+    .snip-info{flex:1;min-width:0;}
+    .snip-title{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--text);margin-bottom:8px;}
+    .snip-desc{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:10px;}
+    .snip-meta{display:flex;gap:16px;font-size:12px;color:var(--dim);flex-wrap:wrap;}
+    .snip-meta a{color:var(--blue);text-decoration:none;}
+    .snip-meta a:hover{text-decoration:underline;}
+    .badge{background:var(--bg3);color:var(--muted);padding:3px 10px;border-radius:5px;font-size:11px;border:1px solid var(--border);}
+    .snip-actions{display:flex;gap:8px;flex-shrink:0;align-items:flex-start;flex-wrap:wrap;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:7px;font-family:inherit;font-size:12px;cursor:pointer;text-decoration:none;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s;}
+    .btn:hover{border-color:var(--blue);color:var(--blue);}
+    .btn-raw{border-color:var(--purple);color:var(--purple);}
+    .btn-raw:hover{background:rgba(188,140,255,.1);}
+    .btn-copy{border-color:var(--green);color:var(--green);}
+    .btn-copy:hover{background:rgba(63,185,80,.1);}
+    .btn-del{border-color:var(--red);color:var(--red);}
+    .btn-del:hover{background:rgba(248,81,73,.1);}
+
+    /* tabs */
+    .code-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg);}
+    .code-tab{padding:10px 18px;font-size:12px;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+    .code-tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+    .code-tab:hover:not(.active){color:var(--muted);}
+
+    /* code view */
+    .code-wrapper{display:flex;overflow-x:auto;}
+    .line-nums{background:rgba(0,0,0,.3);padding:20px 0;user-select:none;flex-shrink:0;}
+    .line-nums span{display:block;padding:0 16px;color:var(--dim);font-size:12.5px;line-height:22px;text-align:right;min-width:48px;}
+    pre.code-body{margin:0;padding:20px;flex:1;overflow-x:auto;font-size:13px;line-height:22px;color:#abb2bf;white-space:pre;tab-size:2;}
+
+    /* raw view */
+    #raw-view{display:none;padding:20px;}
+    #raw-view pre{font-size:13px;line-height:22px;color:var(--muted);white-space:pre-wrap;word-break:break-all;}
+
+    /* endpoint info */
+    .endpoints{margin-top:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+    .endpoints-title{padding:12px 18px;border-bottom:1px solid var(--border);font-size:12px;color:var(--dim);}
+    .endpoint-row{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--border);}
+    .endpoint-row:last-child{border-bottom:none;}
+    .method{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;flex-shrink:0;}
+    .GET{background:rgba(63,185,80,.15);color:var(--green);}
+    .endpoint-url{font-size:12px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .endpoint-url a{color:var(--blue);text-decoration:none;}
+    .endpoint-url a:hover{text-decoration:underline;}
+    .endpoint-desc{font-size:11px;color:var(--dim);}
+
+    /* loading */
+    #loading{text-align:center;padding:80px;color:var(--dim);}
+    #error-view{display:none;text-align:center;padding:80px;}
+    #error-view h2{color:var(--red);font-size:20px;margin-bottom:8px;}
+    #error-view p{color:var(--dim);font-size:13px;}
+
+    .toast{position:fixed;bottom:24px;right:24px;z-index:9999;padding:10px 18px;border-radius:8px;font-size:12px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;transform:translateY(8px);}
+    .toast.show{opacity:1;transform:none;pointer-events:all;}
+    .toast.ok{background:var(--green);color:#000;}
+    .toast.err{background:var(--red);color:#fff;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">
+    <span style="font-size:20px">⟨/⟩</span>
+    <span class="logo-text">code<span>share</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">home</a>
+    <a href="explore.html">explore</a>
+    <div id="user-nav"></div>
+  </div>
+</nav>
+
+<div class="container">
+  <a href="explore.html" class="back">← back to explore</a>
+
+  <div id="loading">loading snippet…</div>
+  <div id="error-view">
+    <h2>404</h2>
+    <p>snippet not found</p>
+    <a href="explore.html" class="btn" style="margin-top:16px;display:inline-flex">← browse snippets</a>
+  </div>
+
+  <div id="main" style="display:none">
+    <div class="snippet-box">
+      <div class="snip-head">
+        <div class="snip-info">
+          <div class="snip-title" id="title"></div>
+          <div class="snip-desc" id="desc"></div>
+          <div class="snip-meta">
+            <span>by <a id="author-link" href="#">@<span id="author"></span></a></span>
+            <span id="lang-badge" class="badge"></span>
+            <span>📄 <span id="lines"></span> lines</span>
+            <span>👁 <span id="views"></span> views</span>
+            <span id="date"></span>
+          </div>
+        </div>
+        <div class="snip-actions">
+          <a id="raw-link" class="btn btn-raw" target="_blank">⟨/⟩ raw</a>
+          <button class="btn btn-copy" onclick="copyCode()">⎘ copy</button>
+          <button class="btn btn-copy" onclick="copyLink()" style="border-color:var(--blue);color:var(--blue)">🔗 link</button>
+          <button class="btn btn-del" id="del-btn" style="display:none" onclick="deleteSnippet()">✕ delete</button>
+        </div>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tab active" onclick="switchTab('code',this)">code</div>
+        <div class="code-tab" onclick="switchTab('raw',this)">raw</div>
+      </div>
+
+      <div id="code-view">
+        <div class="code-wrapper">
+          <div class="line-nums" id="line-nums"></div>
+          <pre class="code-body" id="code-body"></pre>
+        </div>
+      </div>
+      <div id="raw-view">
+        <pre id="raw-body"></pre>
+      </div>
+    </div>
+
+    <div class="endpoints">
+      <div class="endpoints-title">endpoints for this snippet</div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <span class="endpoint-url"><a id="ep-view" href="#" target="_blank"></a></span>
+        <span class="endpoint-desc">view (JSON)</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <span class="endpoint-url"><a id="ep-raw" href="#" target="_blank"></a></span>
+        <span class="endpoint-desc">raw code (text/plain)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api';
+let snippetData = null;
+
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = `toast ${type} show`;
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+const escape = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function highlight(code, lang) {
+  let h = escape(code);
+  if(lang === 'plaintext') return h;
+  // strings
+  h = h.replace(/(&#x27;[^&#]*&#x27;|&quot;[^&]*&quot;|`[^`]*`)/g,'<span style="color:#98c379">$1</span>');
+  // keywords
+  h = h.replace(/\b(const|let|var|function|return|if|else|for|while|import|export|from|default|class|new|async|await|try|catch|finally|typeof|instanceof|def|print|self|None|True|False|fn|pub|use|struct|impl|type|interface|enum|extends|implements|static|void|int|string|bool|break|continue|switch|case|null|undefined|in|of)\b/g,'<span style="color:#c678dd">$1</span>');
+  // numbers
+  h = h.replace(/\b(\d+\.?\d*)\b/g,'<span style="color:#d19a66">$1</span>');
+  // single-line comments
+  h = h.replace(/(\/\/[^\n]*)/g,'<span style="color:#5c6370;font-style:italic">$1</span>');
+  h = h.replace(/(#[^\n]*)/g,'<span style="color:#5c6370;font-style:italic">$1</span>');
+  return h;
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('code-view').style.display = tab==='code' ? '' : 'none';
+  document.getElementById('raw-view').style.display = tab==='raw' ? '' : 'none';
+}
+
+function copyCode() {
+  if(!snippetData) return;
+  navigator.clipboard.writeText(snippetData.code);
+  toast('code copied!');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href);
+  toast('link copied!');
+}
+
+async function deleteSnippet() {
+  if(!confirm('delete this snippet?')) return;
+  const token = localStorage.getItem('token');
+  try {
+    const r = await fetch(`${API}/snippets/${snippetData.slug}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if(!r.ok) throw new Error((await r.json()).error);
+    toast('deleted!');
+    setTimeout(() => window.location.href = 'profile.html', 1000);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+async function load() {
+  const slug = window.location.hash.slice(1);
+  if(!slug) { showError(); return; }
+
+  try {
+    const r = await fetch(`${API}/snippets/${slug}`);
+    if(!r.ok) { showError(); return; }
+    snippetData = await r.json();
+    render(snippetData);
+  } catch { showError(); }
+}
+
+function render(s) {
+  document.title = `${s.title} · codeshare`;
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('main').style.display = '';
+
+  document.getElementById('title').textContent = s.title;
+  document.getElementById('desc').textContent = s.description || '';
+  document.getElementById('author').textContent = s.author?.username || '?';
+  document.getElementById('author-link').href = `profile.html#${s.author?.username}`;
+  document.getElementById('lang-badge').textContent = s.language;
+  const lines = s.code.split('\n');
+  document.getElementById('lines').textContent = lines.length;
+  document.getElementById('views').textContent = s.views;
+  document.getElementById('date').textContent = new Date(s.createdAt).toLocaleDateString();
+
+  const rawUrl = `/api/snippets/${s.slug}/raw`;
+  document.getElementById('raw-link').href = rawUrl;
+
+  // endpoints
+  const base = window.location.origin;
+  document.getElementById('ep-view').textContent = `${base}/api/snippets/${s.slug}`;
+  document.getElementById('ep-view').href = `/api/snippets/${s.slug}`;
+  document.getElementById('ep-raw').textContent = `${base}/api/snippets/${s.slug}/raw`;
+  document.getElementById('ep-raw').href = rawUrl;
+
+  // code
+  const nums = document.getElementById('line-nums');
+  nums.innerHTML = lines.map((_,i) => `<span>${i+1}</span>`).join('');
+  document.getElementById('code-body').innerHTML = highlight(s.code, s.language);
+  document.getElementById('raw-body').textContent = s.code;
+
+  // delete button for owner
+  const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+  if(user && (user.id === s.author?._id || user.id === s.author?.id)) {
+    document.getElementById('del-btn').style.display = '';
+  }
+}
+
+function showError() {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('error-view').style.display = '';
+}
+
+function updateNavUser() {
+  const u = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+  const nav = document.getElementById('user-nav');
+  nav.innerHTML = u
+    ? `<a href="new.html" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;background:#3fb950;color:#000;text-decoration:none;border:1px solid #3fb950">+ new</a>
+       <a href="profile.html" style="color:var(--muted);text-decoration:none;font-size:12px;padding:5px 12px;border-radius:6px">@${u.username}</a>`
+    : `<a href="index.html" style="color:var(--muted);font-size:12px;padding:5px 12px;border-radius:6px;text-decoration:none">login</a>`;
+}
+
+updateNavUser();
+load();
+window.addEventListener('hashchange', load);
+</script>
+</body>
+</html>
